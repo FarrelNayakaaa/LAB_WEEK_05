@@ -68,19 +68,24 @@ class MainActivity : AppCompatActivity() {
             ) {
                 if (response.isSuccessful) {
                     val images = response.body()
-                    val firstImage = images?.firstOrNull()?.url
+                    val firstImage = images?.firstOrNull()
 
-                    if (!firstImage.isNullOrEmpty()) {
-                        apiResponseView.text = "Image URL: $firstImage"
+                    if (firstImage != null) {
+                        // ambil nama breed kalau ada
+                        val breedName = firstImage.breeds?.firstOrNull()?.name ?: "Unknown"
 
-                        // Load gambar pakai Glide
-                        Glide.with(this@MainActivity)
-                            .load(firstImage)
-                            .into(catImageView)
+                        apiResponseView.text = "Breed: $breedName"
 
-                        Log.d(MAIN_ACTIVITY, "Image URL: $firstImage")
+                        // tetap load gambar pakai Glide
+                        if (!firstImage.url.isNullOrEmpty()) {
+                            Glide.with(this@MainActivity)
+                                .load(firstImage.url)
+                                .into(catImageView)
+                        }
+
+                        Log.d(MAIN_ACTIVITY, "Breed: $breedName, URL: ${firstImage.url}")
                     } else {
-                        apiResponseView.text = "No URL found"
+                        apiResponseView.text = "No data found"
                     }
                 } else {
                     val errorMsg = response.errorBody()?.string().orEmpty()
