@@ -2,26 +2,38 @@ package com.example.lab_week_05
 
 import android.os.Bundle
 import android.util.Log
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import com.bumptech.glide.Glide
 import com.example.lab_week_05.api.CatApiService
 import com.example.lab_week_05.model.ImageData
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
+import okhttp3.OkHttpClient
 import retrofit2.*
 import retrofit2.converter.moshi.MoshiConverterFactory
+import java.net.InetAddress
+import java.net.Inet4Address
 
 class MainActivity : AppCompatActivity() {
 
-    // Retrofit dengan Moshi + KotlinJsonAdapterFactory
     private val retrofit by lazy {
         val moshi = Moshi.Builder()
             .add(KotlinJsonAdapterFactory())
             .build()
 
+        // Paksa pakai IPv4
+        val client = OkHttpClient.Builder()
+            .dns { hostname ->
+                InetAddress.getAllByName(hostname).filterIsInstance<Inet4Address>()
+            }
+            .build()
+
         Retrofit.Builder()
             .baseUrl("https://api.thecatapi.com/v1/")
             .addConverterFactory(MoshiConverterFactory.create(moshi))
+            .client(client)
             .build()
     }
 
@@ -30,12 +42,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var apiResponseView: TextView
+    private lateinit var catImageView: ImageView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
         apiResponseView = findViewById(R.id.api_response)
+        catImageView = findViewById(R.id.cat_image)
 
         getCatImageResponse()
     }
@@ -58,15 +72,20 @@ class MainActivity : AppCompatActivity() {
 
                     if (!firstImage.isNullOrEmpty()) {
                         apiResponseView.text = "Image URL: $firstImage"
+
+                        // Load gambar pakai Glide
+                        Glide.with(this@MainActivity)
+                            .load(firstImage)
+                            .into(catImageView)
+
                         Log.d(MAIN_ACTIVITY, "Image URL: $firstImage")
                     } else {
                         apiResponseView.text = "No URL found"
-                        Log.w(MAIN_ACTIVITY, "Response without URL: $images")
                     }
                 } else {
                     val errorMsg = response.errorBody()?.string().orEmpty()
-                    Log.e(MAIN_ACTIVITY, "Failed response: $errorMsg")
                     apiResponseView.text = "Error: $errorMsg"
+                    Log.e(MAIN_ACTIVITY, "Failed response: $errorMsg")
                 }
             }
         })
@@ -76,4 +95,3 @@ class MainActivity : AppCompatActivity() {
         const val MAIN_ACTIVITY = "MAIN_ACTIVITY"
     }
 }
-
