@@ -10,3 +10,6 @@ Part 3 - Commit No. 3 - Load and Display Cat Image using Glide
 
 <img width="342" height="710" alt="Screenshot 2025-09-28 at 1 03 34 PM" src="https://github.com/user-attachments/assets/7837acb8-57b6-49a8-8f82-e76fb56e951c" />
 
+Part 4 - Assignment
+
+<img width="367" height="697" alt="Screenshot 2025-09-28 at 1 07 42 PM" src="https://github.com/user-attachments/assets/8cc2af5b-9504-499f-a847-e889e0db519f" />
