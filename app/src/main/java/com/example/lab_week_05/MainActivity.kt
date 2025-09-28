@@ -76,3 +76,4 @@ class MainActivity : AppCompatActivity() {
         const val MAIN_ACTIVITY = "MAIN_ACTIVITY"
     }
 }
+

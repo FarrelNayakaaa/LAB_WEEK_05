@@ -9,3 +9,4 @@ data class ImageData(
     val height: Int? = null,
     val breeds: List<CatBreedData>? = emptyList()
 )
+
